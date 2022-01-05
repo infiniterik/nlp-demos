@@ -1,11 +1,18 @@
 import streamlit as st
 
-#@title Porter stemmer
-import nltk
-
 from nltk.stem.porter import *
+from nltk.stem.snowball import *
+
 p_stemmer = PorterStemmer()
-st.title("Porter Stemmer")
+s_stemmer = SnowballStemmer("english")
+
+st.title("Stemming Demo")
+
 word = st.text_input('Enter word to stem')
 if word:
-	st.title(word+'→'+p_stemmer.stem(word))
+	p_stemmed = p_stemmer.stem(word)
+	s_stemmed = s_stemmer.stem(word)
+	st.title("Porter")
+	st.write(word + '→'+ p_stemmed)
+	st.title("Snowball")
+	st.write(word + '→'+ s_stemmed)
