@@ -46,7 +46,7 @@ def lesk(sentence, target, pos, use_spacy):
                 sim = 0
                 tok = ""
                 for t in range(len(definition)):
-                    if tspace[t][0].is_punct:
+                    if tspace[t][0].is_punct or tspace[t][0].is_stop:
                         continue
                     _sim = tw.similarity(tspace[t])
                     if _sim > sim:
