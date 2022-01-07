@@ -53,7 +53,7 @@ colors = ["#D1FAFF", "#9BD1E5", "#6A8EAE", "#57A773", "#157145"]
 
 @st.cache
 def lesk(sentence, target, pos, use_spacy=use_spacy, full_vector=full_vector, full_sentence=full_sentence):
-    if use_spacy or full_vector:
+    if use_spacy or full_vector or full_sentence:
         nlp = spacy.load("en_core_web_sm")
     overlaps = []
     synsets = wn.synsets(target, pos)
