@@ -170,7 +170,7 @@ if sentence and target:
     for winner in sorted(result, key=lambda x: -sum(x[0])):
         score = winner[1] + " was the most frequent sense. No overlap found."
         if sum(winner[0]) or not mfs:
-            score = winner[1] + " had an overlap of " + annotated_text((str(sum(winner[0])), "", colors[-1]))
+            score = winner[1] + " had an overlap of " + str(sum(winner[0]))
         with st.expander(score):
             annotated_text(*highlight_definition(winner[2], winner[0], winner[3]))
             st.write("")
