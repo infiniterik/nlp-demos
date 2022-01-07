@@ -19,13 +19,15 @@ target = st.sidebar.text_input("target word")
 pos = st.sidebar.selectbox("part of speech", ("n", "v", "a", "r", "s"))
 stop = st.sidebar.checkbox("Remove stopwords")
 use_spacy = st.sidebar.checkbox("use word vectors")
+full_vector = st.sidebar.checkbox("compare each word to full definition")
 stopword_list = stopwords.words("english")
 colors = ["#D1FAFF", "#9BD1E5", "#6A8EAE", "#57A773", "#157145"]
 
 @st.cache
 def lesk(sentence, target, pos, use_spacy):
-    if use_spacy:
+    if use_spacy or full_vector:
         nlp = spacy.load("en_core_web_sm")
+        nsent = nlp(sentence)
     overlaps = []
     synsets = wn.synsets(target, pos)
     scored = []
@@ -33,6 +35,8 @@ def lesk(sentence, target, pos, use_spacy):
         definition = word_tokenize(s.definition())
         if use_spacy:
             tspace = [nlp(d) for d in definition]
+        if full_vector:
+            tspace = nlp(" ".join(definition))
         score = []
         match = []
         for w in sentence:
@@ -42,6 +46,8 @@ def lesk(sentence, target, pos, use_spacy):
             elif use_spacy:
                 tw = nlp(w)
                 if tw[0].is_punct:
+                    score.append(0)
+                    match.append("")
                     continue
                 sim = 0
                 tok = ""
@@ -54,6 +60,14 @@ def lesk(sentence, target, pos, use_spacy):
                         sim = _sim
                 score.append(sim)
                 match.append(tok)
+            elif full_vector:
+                tw = nlp(w)
+                if tw[0].is_punct:
+                    score.append(0)
+                    match.append("")
+                    continue
+                score.append(tspace.similarity(tw))
+                match.append("")
             elif w in definition:
                 score.append(1)
                 match.append(w)
