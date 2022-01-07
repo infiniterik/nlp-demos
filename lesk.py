@@ -117,7 +117,7 @@ def pick(val, min_v, max_v):
 
 def highlight_definition(definition, match, scores):
     if len(scores) != len(match):
-        return " ".join(definition)
+        return "Definition: " + " ".join(definition)
     result = ["Definition: "]
     weights = list(zip(match, scores))
     if use_spacy:
