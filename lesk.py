@@ -39,7 +39,6 @@ colors = ["#D1FAFF", "#9BD1E5", "#6A8EAE", "#57A773", "#157145"]
 def lesk(sentence, target, pos, use_spacy):
     if use_spacy or full_vector:
         nlp = spacy.load("en_core_web_sm")
-        nsent = nlp(sentence)
     overlaps = []
     synsets = wn.synsets(target, pos)
     scored = []
