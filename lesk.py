@@ -167,6 +167,7 @@ def highlight_sentence(sentence, scores, match):
 if sentence and target:
     result = lesk(sentence, target, pos, use_spacy, full_vector, full_sentence)
     mfs = True
+    "## Results"
     for winner in sorted(result, key=lambda x: -sum(x[0])):
         score = winner[1] + " was the most frequent sense. No overlap found."
         if sum(winner[0]) or not mfs:
