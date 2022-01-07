@@ -47,7 +47,7 @@ def lesk(sentence, target, pos, use_spacy):
         if use_spacy:
             tspace = [nlp(d) for d in definition]
         if full_vector:
-            tspace = nlp(" ".join(definition))
+            tspace = nlp(" ".join([d for d in definition if (not stop) or (d not in stopword_list)]))
         score = []
         match = []
         for w in sentence:
@@ -121,9 +121,9 @@ def highlight_definition(definition, match, scores):
 def highlight_sentence(sentence, scores, match):
     result = []
     if use_spacy:
-        fmt = "%s, %.2f"
+        fmt = "%s %.2f"
     else:
-        fmt = "%s, %d"
+        fmt = "%s %d"
     mscores = [s for s in scores if s]
     if not mscores:
         min_v = 0
