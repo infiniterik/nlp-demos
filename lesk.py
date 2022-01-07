@@ -69,6 +69,7 @@ def lesk(sentence, target, pos, use_spacy=use_spacy, full_vector=full_vector, fu
         if full_sentence:
             tsent = nlp(" ".join([w for w in sentence if (not stop) or (w not in stopword_list)]))
             score = [tspace.similarity(tsent)]
+            scored.append((score, s.name(), definition, match))
             continue
         for w in sentence:
             if stop and w in stopword_list:
