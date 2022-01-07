@@ -14,17 +14,19 @@ from nltk.tokenize import word_tokenize
 
 
 st.title("Lesk Demo")
-"""The Lesk algorithm (Lesk, 1980) is a knowledge based Word Sense Disambiguation algorithm. 
+with st.expander("Instructions"):
+    """The Lesk algorithm (Lesk, 1980) is a knowledge based Word Sense Disambiguation algorithm. 
 It determines the most likely sense for a target word in a sentence based on the overlap between
 the sentence and the glosses of the sense."""
-st.write()
-"""Input a sentence and a target word from the sentence below. Be sure to select the correct part of speech as well.
+    st.write()
+    """
 The part of speeches are as follows:
 - 'n' for Noun, 
 - 'v' for Verb, 
 - 'a' for Adjective
 - 'r' for Adverb
 - 's' for Satellite"""
+st.sidebar.write("Input a sentence and a target word from the sentence below. Be sure to select the correct part of speech as well.")
 sentence = word_tokenize(st.sidebar.text_input("Input sentence here"))
 target = st.sidebar.text_input("target word")
 pos = st.sidebar.selectbox("part of speech", ("n", "v", "a", "r", "s"))
