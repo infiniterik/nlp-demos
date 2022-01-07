@@ -14,10 +14,22 @@ from nltk.tokenize import word_tokenize
 
 
 st.title("Lesk Demo")
+"""The Lesk algorithm (Lesk, 1980) is a knowledge based Word Sense Disambiguation algorithm. 
+It determines the most likely sense for a target word in a sentence based on the overlap between
+the sentence and the glosses of the sense."""
+st.write()
+"""Input a sentence and a target word from the sentence below. Be sure to select the correct part of speech as well.
+The part of speeches are as follows:
+- 'n' for Noun, 
+- 'v' for Verb, 
+- 'a' for Adjective
+- 'r' for Adverb
+- 's' for Satellite"""
 sentence = word_tokenize(st.sidebar.text_input("Input sentence here"))
 target = st.sidebar.text_input("target word")
 pos = st.sidebar.selectbox("part of speech", ("n", "v", "a", "r", "s"))
 stop = st.sidebar.checkbox("Remove stopwords")
+st.write("Use word vectors. In this approach we aggregate the score for each word in the sentence compared to its most similar counterpart in the definition.")
 use_spacy = st.sidebar.checkbox("use word vectors")
 full_vector = st.sidebar.checkbox("compare each word to full definition")
 stopword_list = stopwords.words("english")
@@ -44,6 +56,7 @@ def lesk(sentence, target, pos, use_spacy):
                 score.append(0)
                 match.append("")
             elif use_spacy:
+                # Find the most similar word in the definition for each word in the sentence
                 tw = nlp(w)
                 if tw[0].is_punct:
                     score.append(0)
@@ -52,7 +65,7 @@ def lesk(sentence, target, pos, use_spacy):
                 sim = 0
                 tok = ""
                 for t in range(len(definition)):
-                    if tspace[t][0].is_punct or tspace[t][0].is_stop:
+                    if tspace[t][0].is_punct or (stop and tspace[t][0].is_stop):
                         continue
                     _sim = tw.similarity(tspace[t])
                     if _sim > sim:
@@ -61,6 +74,7 @@ def lesk(sentence, target, pos, use_spacy):
                 score.append(sim)
                 match.append(tok)
             elif full_vector:
+                # Compare the similarity of each word in the sentence against the entire definition
                 tw = nlp(w)
                 if tw[0].is_punct:
                     score.append(0)
