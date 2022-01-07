@@ -54,6 +54,15 @@ def lesk(sentence, target, pos, use_spacy):
             if stop and w in stopword_list:
                 score.append(0)
                 match.append("")
+            elif full_vector:
+                # Compare the similarity of each word in the sentence against the entire definition
+                tw = nlp(w)
+                if tw[0].is_punct:
+                    score.append(0)
+                    match.append("")
+                    continue
+                score.append(tspace.similarity(tw))
+                match.append("")
             elif use_spacy:
                 # Find the most similar word in the definition for each word in the sentence
                 tw = nlp(w)
@@ -72,15 +81,6 @@ def lesk(sentence, target, pos, use_spacy):
                         sim = _sim
                 score.append(sim)
                 match.append(tok)
-            elif full_vector:
-                # Compare the similarity of each word in the sentence against the entire definition
-                tw = nlp(w)
-                if tw[0].is_punct:
-                    score.append(0)
-                    match.append("")
-                    continue
-                score.append(tspace.similarity(tw))
-                match.append("")
             elif w in definition:
                 score.append(1)
                 match.append(w)
