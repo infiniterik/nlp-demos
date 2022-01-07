@@ -12,7 +12,7 @@ from nltk.corpus import wordnet as wn
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
-approaches = ("Naive", "Vector-based Word-Word alignment", "Vector-Based Sentence-Word Comparison")
+approaches = ("Original", "Vector-based Word-Word alignment", "Vector-Based Definition-Word Comparison", "Vector-Based Definition-Sentence Comparison")
 
 st.title("Lesk Demo")
 with st.expander("Instructions"):
@@ -27,15 +27,27 @@ The part of speeches are as follows:
 - 'a' for Adjective
 - 'r' for Adverb
 - 's' for Satellite"""
+    st.write()
+
+with st.expander("Algorithm Variants"):
+    """
+    For the following variants, we use word vectors provided by `spacy`'s `en_web_sm`. Similarity is computed using cosine.
+    #### Vector-Based Word-Word Comparison
+    This approach aligns each word in the sentence to its most similar word in the definition and aggregates the similarities.
+    #### Vector-Based Definition-Word Comparison
+    This approach compares the entire definition against each word in the sentence and aggregates the similarity.
+    #### Vector-Based Definition-Sentence Comparison
+    This approach compares the entire definition against the entire sentence.
+    """
 st.sidebar.write("Input a sentence and a target word from the sentence below. Be sure to select the correct part of speech as well.")
 sentence = word_tokenize(st.sidebar.text_input("Input sentence here"))
 target = st.sidebar.text_input("target word")
 pos = st.sidebar.selectbox("part of speech", ("n", "v", "a", "r", "s"))
 stop = st.sidebar.checkbox("Remove stopwords")
-st.sidebar.write("Use word vectors. In this approach we aggregate the score for each word in the sentence compared to its most similar counterpart in the definition.")
 vector_options = st.sidebar.selectbox("Algorithm variants", approaches)
 use_spacy = vector_options == approaches[1]
 full_vector = vector_options == approaches[2]
+full_sentence = vector_options == approaches[3]
 stopword_list = stopwords.words("english")
 colors = ["#D1FAFF", "#9BD1E5", "#6A8EAE", "#57A773", "#157145"]
 
@@ -50,10 +62,14 @@ def lesk(sentence, target, pos, use_spacy):
         definition = word_tokenize(s.definition())
         if use_spacy:
             tspace = [nlp(d) for d in definition]
-        if full_vector:
+        if full_vector or full_sentence:
             tspace = nlp(" ".join([d for d in definition if (not stop) or (d not in stopword_list)]))
         score = []
         match = []
+        if full_sentence:
+            tsent = nlp(" ".join([w for w in sentence if (not stop) or (w not in stopword_list)]))
+            score = [tspace.similarity(tsent)]
+            continue
         for w in sentence:
             if stop and w in stopword_list:
                 score.append(0)
@@ -99,6 +115,8 @@ def pick(val, min_v, max_v):
     return colors[c]
 
 def highlight_definition(definition, match, scores):
+    if len(scores) != len(match):
+        return " ".join(definition)
     result = ["Definition: "]
     weights = list(zip(match, scores))
     if use_spacy:
@@ -123,6 +141,8 @@ def highlight_definition(definition, match, scores):
     return result
 
 def highlight_sentence(sentence, scores, match):
+    if len(scores) != len(match):
+        return " ".join(sentence)
     result = []
     if use_spacy:
         fmt = "%s %.2f"
