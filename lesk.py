@@ -52,7 +52,7 @@ stopword_list = stopwords.words("english")
 colors = ["#D1FAFF", "#9BD1E5", "#6A8EAE", "#57A773", "#157145"]
 
 @st.cache
-def lesk(sentence, target, pos, use_spacy):
+def lesk(sentence, target, pos, use_spacy=use_spacy, full_vector=full_vector, full_sentence=full_sentence):
     if use_spacy or full_vector:
         nlp = spacy.load("en_core_web_sm")
     overlaps = []
@@ -164,7 +164,7 @@ def highlight_sentence(sentence, scores, match):
     return result
 
 if sentence and target:
-    result = lesk(sentence, target, pos, use_spacy)
+    result = lesk(sentence, target, pos, use_spacy, full_vector, full_sentence)
     mfs = True
     for winner in sorted(result, key=lambda x: -sum(x[0])):
         score = winner[1] + " was the most frequent sense. No overlap found."
