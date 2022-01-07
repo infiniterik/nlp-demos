@@ -12,6 +12,7 @@ from nltk.corpus import wordnet as wn
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
+approaches = ("Naive", "Vector-based Word-Word alignment", "Vector-Based Sentence-Word Comparison")
 
 st.title("Lesk Demo")
 with st.expander("Instructions"):
@@ -31,9 +32,10 @@ sentence = word_tokenize(st.sidebar.text_input("Input sentence here"))
 target = st.sidebar.text_input("target word")
 pos = st.sidebar.selectbox("part of speech", ("n", "v", "a", "r", "s"))
 stop = st.sidebar.checkbox("Remove stopwords")
-st.write("Use word vectors. In this approach we aggregate the score for each word in the sentence compared to its most similar counterpart in the definition.")
-use_spacy = st.sidebar.checkbox("use word vectors")
-full_vector = st.sidebar.checkbox("compare each word to full definition")
+st.sidebar.write("Use word vectors. In this approach we aggregate the score for each word in the sentence compared to its most similar counterpart in the definition.")
+vector_options = st.sidebar.selectbox("Algorithm variants", approaches)
+use_spacy = vector_options == approaches[1]
+full_vector = vector_options == approaches[2]
 stopword_list = stopwords.words("english")
 colors = ["#D1FAFF", "#9BD1E5", "#6A8EAE", "#57A773", "#157145"]
 
