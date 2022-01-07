@@ -41,9 +41,13 @@ def lesk(sentence, target, pos, use_spacy):
                 match.append("")
             elif use_spacy:
                 tw = nlp(w)
+                if tw[0].is_punct:
+                    continue
                 sim = 0
                 tok = ""
                 for t in range(len(definition)):
+                    if tspace[t][0].is_punct:
+                        continue
                     _sim = tw.similarity(tspace[t])
                     if _sim > sim:
                         tok = definition[t]
